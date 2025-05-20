@@ -74,7 +74,7 @@ app.set('trust proxy', true)
 
 
 
-const port = process.env.PORT || 3000; // Define the port
+const port = 3000; // Define the port
 
 app.use((error, req, res, next) => {
   console.error(error.stack);
@@ -89,43 +89,8 @@ app.get('/', (req, res) => {
 });
 
 
-app.get('/q_total', async (req, res) => {
-  let ge = await test_collec.find({}, { _id: 0, ram: 0, device: 0, platform: 0, __v: 0 }).sort({ _id: -1 })
-  console.log(ge);
-  // res.send(ge[0].data);  
-  res.send({ "q_total": ge[0].data.length, "q": ge[0].data });
-});
 
-app.post('/q_get', async (req, res) => {
-  let ge = await test_collec.find({}, { _id: 0, ram: 0, device: 0, platform: 0, __v: 0 }).sort({ _id: -1 })
-  console.log(ge);
 
-  let d;
-
-  res.send(ge[0].data);
-});
-
-app.get('/a', async (req, res) => {
-  let number = await test_collec.count()
-  await new test_collec({
-    data: [{ "order": 1, "question": "\\frac{a}{b}\\ \\text{দুটি সমান বিন্দু চার্জ x-অক্ষের উপর x = aও x = +a বিন্দুতে এবং অন্য একটি বিন্দু চার্জ Q মূলবিন্দুতে স্থাপন করা হলো। যদি চার্জটিকে x-অক্ষ বিরাবর x পরিমাণ সরানো হয়, তাহলে এর বিভব শক্তির পরিবর্তন নিচের কোন রাশিটির সমানুপাতিক?}", "a": "\\phi", "b": "\\hat{x}", "c": "\\perp", "d": "\\infty" }, { "order": 2, "question": "yf", "a": "ff", "b": "kk", "c": "uu", "d": "ii" }],
-    book: "math1",
-    chapter: "gg",
-    cycle: "gg",
-    start: "gg",
-    end: "gg",
-    neg_mark: "gg",
-    per_mark: "gg",
-    duration: "gg",
-    date: moment().tz('Asia/dhaka').format('h:m a,D/M/YY'),
-    ip: req.ip,
-    num: number + 1
-  }).save()
-  console.log(number);
-
-  // res.send(await chat_collec.find({ num: number + 1 }).sort({ _id: -1 }).limit(1))
-  res.send('Hello, World!'); // Send a response
-});
 
 
 app.post('/ac_create', async (req, res) => {
@@ -291,6 +256,64 @@ let verify_cname = async function (cname) {
 }
 
 
+
+app.post('/new_doc44', async function (req, res) {
+
+
+  const ggHeader = req.headers['pas'];
+
+  // Get POST body
+  const postData = req.body;
+
+  console.log('gg header:', ggHeader);
+  console.log('POST body:', postData);
+
+  if (ggHeader != "lee_rock") {
+    return res.status(500).json({ message: 'error finding doc', err: err });
+  }
+
+
+
+
+  let test_sever_name = "varsities"
+
+  const acsSchemaa = new mongoose.Schema({}, { strict: false });
+  const Acs2 = mongoose.models[test_sever_name] || mongoose.model(test_sever_name, acsSchemaa);
+
+ 
+    const count = await Acs2.countDocuments({ varsity: postData.varsity.toLowerCase(), year: postData.year.toLowerCase() });
+    console.log(`Number of matching documents: ${count}`);
+    if (count > 0) {
+      return res.status(500).json({ message: 'doc already exist,cant create by same year & name' });
+    }
+
+
+
+
+  const now = moment().tz('Asia/Dhaka');
+
+
+
+
+
+  const doc = await Acs2.create({
+    varsity: postData.varsity.toLowerCase(),
+    year: postData.year,
+    data: { "math": [], "bio": [], "chem": [], "phy": [], },
+    date_stated: moment().tz('Asia/dhaka').format('h:m:s a,D/M/YY'),
+    date_stated_obj: { year: now.year(), month: now.month() + 1, day: now.date(), hour: now.hour(), min: now.minute(), sec: now.second() }
+    ,
+    ip: req.ip
+  });
+
+
+
+  res.send({ "id": doc.id, "sub": postData.sub,"year": postData.year,"varsity": postData.varsity }); // Send a response
+});
+
+
+
+
 app.post('/view_result', async (req, res) => {
   const data = req.body;
   console.log('Received data:', data);
@@ -345,7 +368,7 @@ app.post('/view_result', async (req, res) => {
 app.post('/lead', async (req, res) => {
   const data = req.body;
   console.log('Received data:', data);
-  let noww=new Date();
+  let noww = new Date();
 
 
 
@@ -368,7 +391,7 @@ app.post('/lead', async (req, res) => {
         .sort({ _id: -1 })
         .exec();
 
-        let arr0=[];
+      let arr0 = [];
 
 
       for (let i = 0; i < doc.length; i++) {
@@ -391,7 +414,7 @@ app.post('/lead', async (req, res) => {
         console.log(`${minutes} minute(s) and ${seconds} second(s)`);
         console.log(el.submit_click);
 
-        const futureTime = new Date(time1.getTime() + Number(Number(el.duration)+1) * 60 * 1000);
+        const futureTime = new Date(time1.getTime() + Number(Number(el.duration) + 1) * 60 * 1000);
 
         console.log(time1);
 
@@ -401,14 +424,14 @@ app.post('/lead', async (req, res) => {
         if (el.submitedd.length == 0) continue;
 
 
-        if (futureTime <=noww) {
-          arr0.push({[el.uuid]:{...el.submitedd,"time_took":diffInSeconds}});
+        if (futureTime <= noww) {
+          arr0.push({ [el.uuid]: { ...el.submitedd, "time_took": diffInSeconds } });
           continue;
         }
 
         if (el.submit_click == undefined) continue;
 
-        if (el.submit_click == "yes") arr0.push({[el.uuid]:{...el.submitedd,"time_took":diffInSeconds}});
+        if (el.submit_click == "yes") arr0.push({ [el.uuid]: { ...el.submitedd, "time_took": diffInSeconds } });
 
 
 
@@ -417,65 +440,65 @@ app.post('/lead', async (req, res) => {
 
 
       let ans = await get_doc_byid(`${data.cname}__tests`, data.id)
-      if(ans.found != "yes"){return res.status(500).json({ message: 'error finding doc', err: err }); }
-     
-      
+      if (ans.found != "yes") { return res.status(500).json({ message: 'error finding doc', err: err }); }
+
+
       console.log(arr0);
       console.log("66666");
       console.log(ans.data.data);
 
       console.log("66666");
 
-      
-      
-      
-      
 
-      
-      let obj1={};
- 
-      
+
+
+
+
+
+      let obj1 = {};
+
+
       for (const item of arr0) {
-          // For each object, extract the key and value (user and their orders)
-          const userKey = Object.keys(item)[0]; // Get the user key (e.g., user_5064)
-          const orders = item[userKey]; // Get the order object for that user
-      
-          console.log(`User: ${userKey}`);
-          console.log('Orders:', orders);  
+        // For each object, extract the key and value (user and their orders)
+        const userKey = Object.keys(item)[0]; // Get the user key (e.g., user_5064)
+        const orders = item[userKey]; // Get the order object for that user
+
+        console.log(`User: ${userKey}`);
+        console.log('Orders:', orders);
 
 
 
-          console.log(77777777);
+        console.log(77777777);
 
-          console.log(orders);
-          console.log(77777777);
-
-
-
-
+        console.log(orders);
+        console.log(77777777);
 
 
 
 
-          const letterToIndex = letter => letter.charCodeAt(0) - 97;
 
-          const result = ans.data.data.reduce(
-            (acc, question) => {
-              const submittedAnswer = orders[`order_${question.order}`];
-              const submittedIndex = submittedAnswer ? letterToIndex(submittedAnswer) : -1;
-          
-              if (submittedIndex === question.ans) acc.correct++;
-              else if (submittedIndex !== -1) acc.wrong++;
-          
-              return acc;
-            },
-            { correct: 0, wrong: 0 } // Initial counts
-          );
-          
-          console.log(`Correct answers: ${result.correct}`);
-          console.log(`Wrong answers: ${result.wrong}`);
 
-          obj1[userKey]={"right":result.correct,"wrong":result.wrong,"time_took":orders.time_took}
+
+
+        const letterToIndex = letter => letter.charCodeAt(0) - 97;
+
+        const result = ans.data.data.reduce(
+          (acc, question) => {
+            const submittedAnswer = orders[`order_${question.order}`];
+            const submittedIndex = submittedAnswer ? letterToIndex(submittedAnswer) : -1;
+
+            if (submittedIndex === question.ans) acc.correct++;
+            else if (submittedIndex !== -1) acc.wrong++;
+
+            return acc;
+          },
+          { correct: 0, wrong: 0 } // Initial counts
+        );
+
+        console.log(`Correct answers: ${result.correct}`);
+        console.log(`Wrong answers: ${result.wrong}`);
+
+        obj1[userKey] = { "right": result.correct, "wrong": result.wrong, "time_took": orders.time_took }
 
 
 
@@ -493,43 +516,43 @@ app.post('/lead', async (req, res) => {
 
 
 
-      let per_markk=1;
-      let neg_markk=0;
+      let per_markk = 1;
+      let neg_markk = 0;
 
 
       const result = /^\d+$/.test(ans.data.per_mark);
-      if (result) {  
-        per_markk=ans.data.per_mark
-       }
+      if (result) {
+        per_markk = ans.data.per_mark
+      }
 
       const result1 = /^[\d.]+$/.test(ans.data.neg_mark);
       if (result1) {
-        neg_markk= ans.data.neg_mark
+        neg_markk = ans.data.neg_mark
       }
 
 
-    const leaderboard = Object.entries(obj1)
-    .map(([userId, { right, wrong, time_took }]) => ({
-      userId,
-      score: right * Number(per_markk) - wrong * Number(neg_markk),
-      timeTook: time_took
-    }))
-    .filter(user => user.score > 0) // Filter out users with score <= 0
-    .sort((a, b) => {
-      const scoreDiff = b.score - a.score;
-      if (scoreDiff !== 0) return scoreDiff;
-      return a.timeTook - b.timeTook || Math.random() - 0.5; // Randomize only if time_took is also equal
-    })
-    .map((user, index) => ({
-      ...user,
-      position: index + 1 // Assign position based on sorted order
-    }));
-  
-  console.log(leaderboard);
-  
-      
-      
-      
+      const leaderboard = Object.entries(obj1)
+        .map(([userId, { right, wrong, time_took }]) => ({
+          userId,
+          score: right * Number(per_markk) - wrong * Number(neg_markk),
+          timeTook: time_took
+        }))
+        .filter(user => user.score > 0) // Filter out users with score <= 0
+        .sort((a, b) => {
+          const scoreDiff = b.score - a.score;
+          if (scoreDiff !== 0) return scoreDiff;
+          return a.timeTook - b.timeTook || Math.random() - 0.5; // Randomize only if time_took is also equal
+        })
+        .map((user, index) => ({
+          ...user,
+          position: index + 1 // Assign position based on sorted order
+        }));
+
+      console.log(leaderboard);
+
+
+
+
 
 
       res.status(200).json({ lead: leaderboard });
@@ -659,7 +682,7 @@ app.post('/q_update_one_feild', async (req, res) => {
 
 });
 
- 
+
 
 app.post('/test_create', async (req, res) => {
   const data = req.body;
@@ -698,7 +721,7 @@ app.post('/test_create', async (req, res) => {
 
       const now = moment().tz('Asia/Dhaka');
       let race = "";
- 
+
       const time1 = moment({ year: document.start_obj.year, month: Number(document.start_obj.month) - 1, day: document.start_obj.day, hour: document.start_obj.hour }).add(document.start_obj.min, 'minutes'); // January 9, 2025, 08:00
       const time2 = moment({ year: document.end_obj.year, month: Number(document.end_obj.month) - 1, day: document.end_obj.day, hour: document.end_obj.hour }).add(Number(document.end_obj.min) + 1, 'minutes'); // January 9, 2025, 18:00
 
@@ -714,7 +737,7 @@ app.post('/test_create', async (req, res) => {
 
       const doc = await Acs2.create({
         uname: data.uname,
-        uuid:data.uuid,
+        uuid: data.uuid,
         cname: data.cname,
         exam: data.id,
         race: race,
@@ -760,7 +783,7 @@ app.post('/test_create', async (req, res) => {
 });
 
 
- let scoree = async function (ans_arr,selected_options) {
+let scoree = async function (ans_arr, selected_options) {
 
 
   const letterToIndex = letter => letter.charCodeAt(0) - 97;
@@ -769,15 +792,15 @@ app.post('/test_create', async (req, res) => {
     (acc, question) => {
       const submittedAnswer = selected_options[`order_${question.order}`];
       const submittedIndex = submittedAnswer ? letterToIndex(submittedAnswer) : -1;
-  
+
       if (submittedIndex === question.ans) acc.correct++;
       else if (submittedIndex !== -1) acc.wrong++;
-  
+
       return acc;
     },
     { correct: 0, wrong: 0 } // Initial counts
   );
-  
+
   console.log(`Correct answers: ${result.correct}`);
   console.log(`Wrong answers: ${result.wrong}`);
 
@@ -828,7 +851,7 @@ app.post('/test_submit', async (req, res) => {
       const time2 = moment({ year: document.exam_end_on_obj.year, month: Number(document.exam_end_on_obj.month) - 1, day: document.exam_end_on_obj.day, hour: document.exam_end_on_obj.hour, }).add(Number(document.exam_end_on_obj.min) + 1, 'minutes'); // January 9, 2025, 18:00
 
 
- 
+
 
       const result = /^[\d.]+$/.test(document.duration);
       if (!result) {
@@ -929,40 +952,40 @@ app.post('/test_submit', async (req, res) => {
             );
             console.log(22222222222222222);
             console.log(document);
-            
-            
-
-      let docc = await get_doc_byid(`${data.cname}__tests`, data.q_id)
-      if(docc.found == "yes"){ 
-       let a=await  scoree(docc.data.data,result.submitedd);
- 
-      let per_markk=1;
-      let neg_markk=0;
 
 
-      const result44 = /^\d+$/.test(docc.data.per_mark);
-      if (result44) {  
-        per_markk=docc.data.per_mark
-       }
 
-      const result144 = /^[\d.]+$/.test(docc.data.neg_mark);
-      if (result144) {
-        neg_markk= docc.data.neg_mark
-      }
- 
+            let docc = await get_doc_byid(`${data.cname}__tests`, data.q_id)
+            if (docc.found == "yes") {
+              let a = await scoree(docc.data.data, result.submitedd);
 
-       let scored= a.correct * Number(per_markk) - a.wrong * Number(neg_markk)
-  
- 
+              let per_markk = 1;
+              let neg_markk = 0;
 
-       
 
-       return res.status(200).json({ score:await scored,data:{correct:a.correct,wrong:a.wrong,score:await scored} });
-       }
-     
+              const result44 = /^\d+$/.test(docc.data.per_mark);
+              if (result44) {
+                per_markk = docc.data.per_mark
+              }
 
-       
-            
+              const result144 = /^[\d.]+$/.test(docc.data.neg_mark);
+              if (result144) {
+                neg_markk = docc.data.neg_mark
+              }
+
+
+              let scored = a.correct * Number(per_markk) - a.wrong * Number(neg_markk)
+
+
+
+
+
+              return res.status(200).json({ score: await scored, data: { correct: a.correct, wrong: a.wrong, score: await scored } });
+            }
+
+
+
+
 
           }
 
@@ -1128,7 +1151,7 @@ app.post('/q_update_time_and_rest', async (req, res) => {
 
 
 
- 
+
 
 
   let startt_datee = moment.tz({
@@ -1151,20 +1174,20 @@ app.post('/q_update_time_and_rest', async (req, res) => {
 
   let formattedDate_end = endd_datee.format('h:mm a, DD/MM/YY');
 
-  let obj0={};
+  let obj0 = {};
   const result = /^\d+$/.test(data.mark);
   if (result) {
-    obj0.per_mark=data.mark
-  }  
+    obj0.per_mark = data.mark
+  }
   const result22 = /^\d+$/.test(data.duration);
   if (result22) {
-    obj0.duration=data.duration
-    obj0.published='yes'
-  }  
+    obj0.duration = data.duration
+    obj0.published = 'yes'
+  }
 
   const result2 = /^[\d.]+$/.test(data.neg);
   if (result2) {
-    obj0.neg_mark=data.neg
+    obj0.neg_mark = data.neg
   }
 
   let rtn = await verify_cname(data.cname);
@@ -1174,7 +1197,7 @@ app.post('/q_update_time_and_rest', async (req, res) => {
       ["start_obj"]: data["start_obj"],
       ["end_obj"]: data["end_obj"],
       ["start"]: formattedDate_start,
-      ["end"]: formattedDate_end,...obj0
+      ["end"]: formattedDate_end, ...obj0
     });
     if (rtn2.found == "yes") {
 
@@ -1225,7 +1248,7 @@ app.post('/q_update_time_and_rest', async (req, res) => {
 
 
 
- 
+
 
 
 })
@@ -1308,20 +1331,16 @@ app.post('/ac_public_get_all', async (req, res) => {
 
 
 app.post('/ac_find_by_id', async (req, res) => {
+
+  try{ 
   const data = req.body;
   console.log('Received data:', data);
   let name = data.name
+  let test_name=name;
 
   let ge = await test_ac_collec.find({ name: name }, { _id: 0, ram: 0, device: 0, platform: 0, __v: 0 })
     .sort({ _id: -1 });
 
-
-
-
-  if (ge.length == 1) {
-
-
-    let test_name = data.name + "__tests"
 
 
     const acsSchema = new mongoose.Schema({}, { strict: false });
@@ -1330,21 +1349,19 @@ app.post('/ac_find_by_id', async (req, res) => {
 
 
     const document = await Acs.findById(data.id);
+
     console.log(document);
-
-
-
+    
 
 
     res.status(200).json({ doc: document, message: '', received: data });
 
-  } else if (ge.length == 0) {
-    res.status(404).json({ message: 'account not found', received: data });
+  
+  }catch(err){
+    console.log("err- "+ err);
+    res.status(500).send({ message: "error " + err});
+    
   }
-  else {
-    res.status(500).send({ message: "Same Named Ac ,count:" + ge.length });
-  }
-
 
 
 
@@ -1509,86 +1526,49 @@ app.post('/ac_publish', async (req, res) => {
 app.post('/q_add', async (req, res) => {
   const data = req.body;
   console.log('Received data:', data);
+ 
 
 
-  let test_name = data.edtech_name + "__tests"
+  let test_name =   "varsities"
 
   const acsSchema = new mongoose.Schema({}, { strict: false });
   const Acs = mongoose.models[test_name] || mongoose.model(test_name, acsSchema);
 
-  let count = await Acs.countDocuments();
-  console.log(`Total documents in ${test_name}: ${count}`);
-
-
-  if (data.idd == undefined) {
-
  
 
-    let a = [
-      {
-        "order": 1,
-        "question": data.Q,
-        "a": data.a,
-        "b": data.b,
-        "c": data.c,
-        "d": data.d,
-        ans: data.ans
-      }
-    ]
 
-
-    const savedDocument = {
-      data: a,
-      book: "math1",
-      chapter: "gg",
-      cycle: "gg",
-      start: "gg",
-      end: "gg",
-      neg_mark: "gg",
-      per_mark: "gg",
-      duration: "gg",
-      titlee: `exam_${count + 1}`,
-      date: moment().tz('Asia/dhaka').format('h:m a,D/M/YY'),
-      ip: req.ip
-    }
-    const createdDoc = await Acs.create(savedDocument);
-
-
-
-
-    console.log('New document ID:', createdDoc.id);
-
-    res.status(200).json({ count_updated: 1, doc_idd: createdDoc.id, message: 'Data received successfully', received: data });
-  }
-  else {
-    console.log(666666);
-    console.log(data);
+ 
+ 
+ 
 
 
     try {
- 
+
 
       const document = await Acs.findById(data.idd);
       console.log(document);
+   
 
 
-      let a = [...document.data,
-      {
-        "order": document.data.length + 1,
-        "question": data.Q,
-        "a": data.a,
-        "b": data.b,
-        "c": data.c,
-        "d": data.d,
-        ans: data.ans
-      }
-      ]
+
+      let s={...document.data}
+      s[data.sub]=[...s[data.sub],{ 
+      "order":  s[data.sub].length + 1,
+      "question": data.Q,
+      "a": data.a,
+      "b": data.b,
+      "c": data.c,
+      "d": data.d,
+      ans: data.ans}
+    ]
+
+ 
 
 
 
       const updatedDocument = await Acs.findByIdAndUpdate(
         data.idd,
-        { $set: { data: a } },
+        { $set: { data: s } },
         { new: true }
 
       );
@@ -1601,7 +1581,7 @@ app.post('/q_add', async (req, res) => {
     }
 
 
-  }
+  
 
 
   // res.status(200).json({ message: 'Data received successfully', received: data });
@@ -1616,15 +1596,19 @@ app.post('/q_dlt', async (req, res) => {
 
 
 
-  let test_name = data.edtech_name + "__tests"
+  let test_name = "varsities"
 
   const acsSchema = new mongoose.Schema({}, { strict: false });
   const Acs = mongoose.models[test_name] || mongoose.model(test_name, acsSchema);
   const document = await Acs.findById(data.id);
 
   let orderToModify = data.order;
-  let old_data = document.data;
+  let old_data = document.data[data.sub];
 
+  console.log(old_data);
+  
+
+ 
 
   let dataa = old_data.map(itemu => {
     if (itemu.order == orderToModify) {
@@ -1634,7 +1618,9 @@ app.post('/q_dlt', async (req, res) => {
   }
   );
 
-  console.log(dataa);
+  let s=document.data
+s[data.sub]=dataa
+  console.log(s);
 
 
 
@@ -1644,17 +1630,17 @@ app.post('/q_dlt', async (req, res) => {
 
   const updatedDocument = await Acs.findByIdAndUpdate(
     data.id,
-    { $set: { data: dataa } },
+    { $set: { data: s } },
     { new: true }
 
   );
 
   console.log('Updated document:', updatedDocument);
   res.status(200).json({ count_updated: updatedDocument.data.length, message: 'obj removed from arr successfully', received: data });
- 
 
 
- 
+
+
 
 
 
@@ -1662,9 +1648,95 @@ app.post('/q_dlt', async (req, res) => {
 });
 
 
+app.post('/chap_edit', async (req, res) => {
+  const data = req.body;
+  console.log('Received data:', data.valuee);
 
 
 
+
+  let test_name = "varsities"
+
+  const acsSchema = new mongoose.Schema({}, { strict: false });
+  const Acs = mongoose.models[test_name] || mongoose.model(test_name, acsSchema);
+  const document = await Acs.findById(data.id);
+
+  let orderToModify = data.order;
+  let old_data = document.data[data.sub];
+
+  console.log(old_data);
+  
+
+ 
+
+  let dataa = old_data.map(itemu => {
+    if (itemu.order == orderToModify) {
+      return { ...itemu, chap: data.chap };
+    }
+    return itemu;
+  }
+  );
+
+  let s=document.data
+s[data.sub]=dataa
+  console.log(s);
+
+
+
+ 
+
+
+
+  const updatedDocument = await Acs.findByIdAndUpdate(
+    data.id,
+    { $set: { data: s } },
+    { new: true }
+
+  );
+
+  console.log('Updated document:', updatedDocument);
+  res.status(200).json({ count_updated: updatedDocument.data.length, message: 'Chapter edited succesfull.', received: data });
+
+
+
+
+
+
+
+
+});
+
+app.post('/get_all', async (req, res) => {
+  const data = req.body;
+ 
+
+ 
+
+
+    let test_name = "varsities"
+
+    const acsSchema = new mongoose.Schema({}, { strict: false });
+    const Acs = mongoose.models[test_name] || mongoose.model(test_name, acsSchema);
+
+
+ 
+
+ 
+
+
+
+
+  let count = await Acs.countDocuments();
+
+  const docs = await Acs.find({}).sort({ varsity: 1 });
+
+
+
+  res.status(200).json({   count: count, docs: docs });
+
+
+
+});
 
 
 
@@ -1780,46 +1852,7 @@ app.post('/gen_otp', handleOtp, async (req, res) => {
     // } else {
     //   return res.status(500).json({ error: 'Failed to send OTP' });
     // }
-
-
-
-
-   try {
-      const res6 = await fetch(`http://bulksmsbd.net/api/smsapi?api_key=uk0KnxYS1HSuilRi7CfB&type=text&number=${data.num}&senderid=8809617613445&message=OTP ${otp}`); // Make the HTTP request
-      let txt=JSON.parse(await res6.text())
-      if (res6.status === 200) { // Check if status code is 200
-     
-        console.log(txt.response_code);
-        if(txt.response_code==202){
-          res.status(200).json({   received: data });
-        }else{
-          res.status(500).json({ error: 'Failed to send OTP' ,code:txt.response_code,txt:txt});
- 
-        }
-        
-      
-    } else {
-        console.log(`Received Status Code: ${res6.status}`); // Log other statuses
-        res.status(500).json({ error: 'Failed to send OTP' ,code:res6.status});
-    }
-
-     
-  } catch (err) {
-      console.error(`Error: ${err.message}`); // Handles any errors
-      res.status(500).json({ error: 'Failed to send OTP' ,err:err});
-  }
-
-
-
-
-
-
-
-
-
-
-    
-    //  res.status(200).json({ otp: otp, received: data });
+    res.status(200).json({ otp: otp, received: data });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to send OTP' });
