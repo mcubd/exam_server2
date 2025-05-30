@@ -1710,25 +1710,16 @@ app.post('/get_all', async (req, res) => {
   const data = req.body;
  
 
- 
-
-
     let test_name = "varsities"
 
     const acsSchema = new mongoose.Schema({}, { strict: false });
     const Acs = mongoose.models[test_name] || mongoose.model(test_name, acsSchema);
 
 
- 
-
- 
-
-
-
 
   let count = await Acs.countDocuments();
 
-  const docs = await Acs.find({}).sort({ varsity: 1 });
+  const docs = await Acs.find({}).sort({ varsity: 1, year: 1 });
 
 
 
