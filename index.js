@@ -1719,7 +1719,7 @@ app.post('/get_all', async (req, res) => {
 
   let count = await Acs.countDocuments();
 
-  const docs = await Acs.find({}).sort({ varsity: 1, year: 1 });
+  const docs = await Acs.find({}).sort({ varsity: 1, year: -1 });
 
 
 
